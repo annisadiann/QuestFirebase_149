@@ -9,7 +9,7 @@ import com.example.praktikum9.modeldata.UIStateSiswa
 import com.example.praktikum9.modeldata.toDataSiswa
 import com.example.praktikum9.repositori.RepositorySiswa
 
-class EntryVieModel(private val repositorySiswa: RepositorySiswa): ViewModel() {
+class EntryViewModel(private val repositorySiswa: RepositorySiswa): ViewModel() {
     var uiStateSiswa by mutableStateOf(UIStateSiswa())
         private set
 
