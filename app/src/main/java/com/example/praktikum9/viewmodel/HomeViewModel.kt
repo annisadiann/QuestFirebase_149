@@ -4,32 +4,37 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.praktikum9.modeldata.DetailSiswa
-import com.example.praktikum9.modeldata.UIStateSiswa
-import com.example.praktikum9.modeldata.toDataSiswa
+import androidx.lifecycle.viewModelScope
+import com.example.praktikum9.modeldata.Siswa
 import com.example.praktikum9.repositori.RepositorySiswa
+import kotlinx.coroutines.launch
+import java.io.IOException
 
-class EntryVieModel(private val repositorySiswa: RepositorySiswa): ViewModel() {
-    var uiStateSiswa by mutableStateOf(UIStateSiswa())
+sealed interface StatusUiSiswa {
+    data class Success(val siswa: List<Siswa> = listOf()) : StatusUiSiswa
+    object Error: StatusUiSiswa
+    object Loading: StatusUiSiswa
+}
+
+class HomeViewModel(private val repositorySiswa: RepositorySiswa): ViewModel() {
+    var statusUiSiswa: StatusUiSiswa by mutableStateOf(StatusUiSiswa.Loading)
         private set
 
-    private fun validasiInput(uiState: DetailSiswa = uiStateSiswa.detailSiswa): Boolean
-    {
-        return with(uiState) {
-            nama.isNotBlank() && alamat.isNotBlank() && telpon.isNotBlank()
-        }
+    init{
+        loadSiswa()
     }
 
-    fun updateUiState(detailSiswa: DetailSiswa) {
-        uiStateSiswa =
-            UIStateSiswa(detailSiswa = detailSiswa, inEntryValid = validasiInput(
-                detailSiswa
-            ))
-    }
-
-    suspend fun addSiswa() {
-        if (validasiInput()) {
-            repositorySiswa.postDataSiswa(uiStateSiswa.detailSiswa.toDataSiswa())
+    fun loadSiswa() {
+        viewModelScope.launch {
+            statusUiSiswa = StatusUiSiswa.Loading
+            statusUiSiswa = try {
+                StatusUiSiswa.Success(repositorySiswa.getDataSiswa())
+            }catch (e: IOException){
+                StatusUiSiswa.Error
+            }
+            catch(e: Exception) {
+                StatusUiSiswa.Error
+            }
         }
     }
 }
