@@ -12,3 +12,8 @@ fun CreationExtras.aplikasiDataSiswa(): AplikasiDataSiswa = (
                 AplikasiDataSiswa
         )
 
+object PenyediaViewModel {
+    val Factory = viewModelFactory {
+
+    }
+}
