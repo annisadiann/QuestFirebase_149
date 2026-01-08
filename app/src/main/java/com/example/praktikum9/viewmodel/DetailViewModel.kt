@@ -47,3 +47,12 @@ class DetailViewModel(savedStateHandle: SavedStateHandle,
         }
     }
 
+    suspend fun hapusSatuSiswa(){
+        try{
+            repositorySiswa.hapusSatuSiswa(idSiswa)
+            println("Sukses hapus data: $idSiswa")
+        }catch (e: Exception) {
+            println("Gagall hapus data: ${e.message}")
+        }
+    }
+}
